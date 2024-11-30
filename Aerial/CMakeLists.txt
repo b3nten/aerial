@@ -12,6 +12,10 @@ add_library(${ENGINE_NAME} STATIC
         ${ENGINE_SOURCES}
 )
 
+add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
+#sdl3
+target_link_libraries(Aerial PRIVATE SDL3::SDL3)
+
 # Add compile definitions
 add_compile_definitions(
         $<$<PLATFORM_ID:Windows>:AERIAL_PLATFORM_WINDOWS>
@@ -31,6 +35,7 @@ target_include_directories(${ENGINE_NAME}
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/src
         ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/external/SDL/include
 )
 
 # GLM

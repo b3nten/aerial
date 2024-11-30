@@ -4,6 +4,7 @@
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/chrono.h>
+#include <SDL3/SDL_log.h>
 #include <print>
 
 namespace Aerial
@@ -49,11 +50,11 @@ namespace Aerial
 }
 
 #ifdef AERIAL_ENABLE_LOGGING
-#define AERIAL_LOG_WARN(...) ::Aerial::Logger::Warn(__VA_ARGS__)
-#define AERIAL_LOG_ERROR(...) ::Aerial::Logger::Error(__VA_ARGS__)
-#define AERIAL_LOG_INFO(...) ::Aerial::Logger::Info(__VA_ARGS__)
-#define AERIAL_LOG_DEBUG(...) ::Aerial::Logger::Debug(__VA_ARGS__)
-#define AERIAL_LOG_FATAL(...) ::Aerial::Logger::Fatal(__VA_ARGS__)
+#define AERIAL_LOG_WARN(...) SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, __VA_ARGS__)
+#define AERIAL_LOG_ERROR(...) SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, __VA_ARGS__)
+#define AERIAL_LOG_INFO(...) SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, __VA_ARGS__)
+#define AERIAL_LOG_DEBUG(...) SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, __VA_ARGS__)
+#define AERIAL_LOG_FATAL(...) SDL_LogCritical(SDL_LOG_CATEGORY_APPLICATION, __VA_ARGS__)
 #else
 #define AERIAL_LOG_WARN(...)
 #define AERIAL_LOG_ERROR(...)

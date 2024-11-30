@@ -1,0 +1,3 @@
+[submodule "Aerial/external/SDL"]
+	path = Aerial/external/SDL
+	url = https://github.com/libsdl-org/SDL

@@ -15,7 +15,6 @@ if(MSVC)
     add_compile_options(/utf-8)
 endif()
 
-
 # Add subdirectories
 add_subdirectory(Aerial)
 add_subdirectory(Sandbox)
