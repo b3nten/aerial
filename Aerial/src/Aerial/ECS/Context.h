@@ -28,10 +28,9 @@ namespace Aerial
 			return m_Registry.view<Components...>();
 		}
 
-		Context* AddSystem(const Arc<System>& system)
+		void AddSystem(const Arc<System>& system)
 		{
 			m_Systems.push_back(system);
-			return this;
 		}
 
 		void RemoveSystem(const Arc<System>& system)
@@ -39,17 +38,20 @@ namespace Aerial
 			std::erase(m_Systems, system);
 		}
 
-		void Create() const;
-		void Update() const;
+		void Create();
+		void Update();
+
+		auto GetRegistry() { return &m_Registry; }
 
 	private:
 		entt::registry m_Registry;
 		std::vector<Arc<System>> m_Systems;
 	};
 
+	// lolololololololololol
 	inline Context& operator<<(Context& context, const Arc<System>& system)
 	{
-		return *context.AddSystem(system);
+		context.AddSystem(system);
+		return context;
 	}
-
 }

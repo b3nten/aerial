@@ -14,8 +14,16 @@ namespace Aerial
 	}
 
 	template<typename T>
-	using Scope = std::unique_ptr<T>;
+	using Box = std::unique_ptr<T>;
+
+	template<typename T, typename... Args>
+	constexpr Box<T> CreateBox(Args&&... args)
+	{
+		return std::make_unique<T>(std::forward<Args>(args)...);
+	}
 }
+
+#define ASSERT(x, ...) if (!(x)) { AERIAL_LOG_ERROR(__VA_ARGS__); __debugbreak(); }
 
 // API export/import macro
 #ifdef AERIAL_PLATFORM_WINDOWS

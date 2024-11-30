@@ -35,6 +35,11 @@ namespace Aerial
 			std::println("Debug: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}
 
+		static void Debug(const char* str)
+		{
+			std::println("Debug: {}", str);
+		}
+
 		template<typename... Args>
 		static void Fatal(fmt::format_string<Args...> fmt, Args&&... args)
 		{

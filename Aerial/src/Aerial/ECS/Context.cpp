@@ -7,17 +7,17 @@ namespace Aerial
 		m_Registry.destroy(entity.m_EnttID);
 	}
 
-	void Context::Create() const
+	void Context::Create()
 	{
-		for (auto& system : m_Systems)
+		for (auto system : m_Systems)
 		{
 			system->OnCreate();
 		}
 	}
 
-	void Context::Update() const
+	void Context::Update()
 	{
-		for (auto& system : m_Systems)
+		for (auto system : m_Systems)
 		{
 			system->OnUpdate();
 		}

@@ -1,6 +1,7 @@
 #pragma once
 #include "../Core/Core.h"
 #include "./System.h"
+#include "../Core/FrameDelta.h"
 
 namespace Aerial
 {

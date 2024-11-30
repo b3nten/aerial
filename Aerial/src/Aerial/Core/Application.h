@@ -10,11 +10,15 @@ namespace Aerial
 		Application();
 		virtual ~Application() = default;
 
-		void Run() const;
+		void Run();
+
+		// todo: implement
+		FrameDelta GetFrameDelta() const { return m_FrameDelta; }
 
 	protected:
 		bool m_Running = false;
 		Context m_AppContext;
+		FrameDelta m_FrameDelta;
 	};
 
 	Application* CreateApplication();

@@ -1,5 +1,20 @@
 #include <Aerial/Aerial.h>
 
+struct Vec2
+{
+	float x,y;
+};
+
+struct Material
+{
+	std::string color;
+};
+
+struct Texture
+{
+	std::string path;
+};
+
 class TestSystem : public Aerial::System
 {
 protected:
@@ -19,7 +34,23 @@ class SandboxApp final : public Aerial::Application
 public:
     SandboxApp()
 	{
-    	this->m_AppContext << Aerial::CreateArc<TestSystem>();
+    	auto WindowSystem = Aerial::CreateArc<TestSystem>();
+    	auto InputSystem = Aerial::CreateArc<TestSystem>();
+    	auto RenderSystem = Aerial::CreateArc<TestSystem>();
+    	auto PhysicsSystem = Aerial::CreateArc<TestSystem>();
+
+    	this->m_AppContext
+    		<< WindowSystem
+    		<< InputSystem
+    		<< RenderSystem
+    		<< PhysicsSystem;
+
+    	const auto ent = this->m_AppContext.CreateEntity()
+    		<< Aerial::Component<Vec2>(1.0f, 2.0f)
+    		<< Aerial::Component<Material>("#fff")
+			<< Aerial::Component<Texture>("path/to/texture.png");
+
+		AERIAL_LOG_DEBUG(static_cast<const char*>(ent));
     }
 
     ~SandboxApp() override = default;
