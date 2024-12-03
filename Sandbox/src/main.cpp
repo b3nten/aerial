@@ -1,6 +1,6 @@
-#include <Aerial/Aerial.h>
+#include <Aerial.h>
 
-class SandboxApp final : public Aerial::Application
+class SandboxApp : public Aerial::Application
 {
 public:
     SandboxApp()
@@ -8,7 +8,7 @@ public:
     	AERIAL_LOG_INFO("SandboxApp created!");
     }
 
-	~SandboxApp()
+	~SandboxApp() override
 	{
 		AERIAL_LOG_INFO("SandboxApp destroyed!");
 	}
@@ -16,7 +16,7 @@ public:
 
 Aerial::ApplicationSettings Aerial::CreateApplicationSettings()
 {
-	return ApplicationSettings("Aerial Sandbox", 1280, 720, SDL_WINDOW_FULLSCREEN);
+	return ApplicationSettings("Aerial Sandbox", 1280, 720);
 }
 
 Aerial::Application* Aerial::CreateApplication()

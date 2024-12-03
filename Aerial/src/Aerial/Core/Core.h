@@ -23,15 +23,17 @@ namespace Aerial
 	}
 }
 
-#define ASSERT(x, ...) if (!(x)) { AERIAL_LOG_ERROR(__VA_ARGS__); __debugbreak(); }
+#define AERIAL_ASSERT(x, ...) if (!(x)) { AERIAL_LOG_ERROR(__VA_ARGS__); __debugbreak(); }
 
-// API export/import macro
-#ifdef AERIAL_PLATFORM_WINDOWS
-#ifdef AERIAL_BUILD_DLL
-#define AERIAL_API __declspec(dllexport)
-#else
-#define AERIAL_API __declspec(dllimport)
-#endif
-#else
-#define AERIAL_API  // Empty on other platforms
-#endif
+// // API export/import macro
+// #ifdef AERIAL_PLATFORM_WINDOWS
+// #ifdef AERIAL_BUILD_DLL
+// #define AERIAL_API __declspec(dllexport)
+// #else
+// #define AERIAL_API __declspec(dllimport)
+// #endif
+// #else
+// #define AERIAL_API  // Empty on other platforms
+// #endif
+
+#define AERIAL_API

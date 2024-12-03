@@ -5,12 +5,11 @@
 
 namespace Aerial
 {
-
 	template<typename T, typename... Args>
 	struct ComponentArgs {
 		std::tuple<Args...> args;
 
-		ComponentArgs(Args&&... params) : args(std::forward<Args>(params)...) {}
+		explicit ComponentArgs(Args&&... params) : args(std::forward<Args>(params)...) {}
 	};
 
 	template<typename T, typename... Args>
@@ -37,8 +36,8 @@ namespace Aerial
 		// lolololololololololol
 		template<typename T, typename... Args>
 		Entity& operator<<(const ComponentArgs<T, Args...>& comp) {
-			std::apply([this](auto&&... params) {
-				this->SetComponent<T>(std::forward<decltype(params)>(params)...);
+			std::apply([this]<typename... T0>(T0&&... params) {
+				this->SetComponent<T>(std::forward<T0>(params)...);
 			}, comp.args);
 			return *this;
 		}
@@ -54,22 +53,38 @@ namespace Aerial
 			return m_Registry->get(m_EnttID);
 		}
 
-		template <typename Component>
-		[[nodiscard]] bool HasComponent() const
+		template <typename ...Components>
+		[[nodiscard]] bool HasSomeComponents() const
 		{
-			auto component =  m_Registry->try_get<Component>();
-			return component != nullptr;
+			return m_Registry->any_of<Components...>(m_EnttID);
+		}
+
+		template <typename ...Components>
+		[[nodiscard]] bool HasAllComponents() const
+		{
+			return m_Registry->all_of<Components>(m_EnttID);
 		}
 
 		template <typename Component>
-		void RemoveComponent() const
+		void DeleteComponent() const
 		{
 			m_Registry->remove<Component>(m_EnttID);
 		}
 
-		// to string overload
+		// void DeleteComponents()
+		// {
+		// 	auto components = GetComponents();
+		// 	for (auto c : components)
+		// 	{
+		// 		auto type = c.type();
+		// 		m_Registry->remove<type>(m_EnttID);
+		// 	}
+		// }
+
+		// todo: string overload
 		explicit operator const char*() const
 		{
+			// todo: look for name component
 			return "Entity";
 		}
 

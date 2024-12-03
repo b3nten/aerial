@@ -2,16 +2,12 @@
 
 namespace Aerial
 {
-	void Context::DestroyEntity(const Entity& entity)
-	{
-		m_Registry.destroy(entity.m_EnttID);
-	}
-
-	void Context::Create()
+	void Context::Start()
 	{
 		for (auto system : m_Systems)
 		{
-			system->OnCreate();
+			system->OnStart();
+			system->m_HasRunOnStart = true;
 		}
 	}
 
@@ -19,6 +15,11 @@ namespace Aerial
 	{
 		for (auto system : m_Systems)
 		{
+			if (!system->m_HasRunOnStart)
+			{
+				system->OnStart();
+				system->m_HasRunOnStart = true;
+			}
 			system->OnUpdate();
 		}
 	}

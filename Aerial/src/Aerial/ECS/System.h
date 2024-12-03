@@ -1,7 +1,6 @@
 #pragma once
 #include "../Core/Core.h"
 #include "./System.h"
-#include "../Core/FrameDelta.h"
 
 namespace Aerial
 {
@@ -13,7 +12,14 @@ namespace Aerial
 		virtual ~System() = default;
 
 	protected:
-		virtual void OnCreate() = 0;
-		virtual void OnUpdate() = 0;
+		virtual void OnStart(){}
+		virtual void OnPreUpdate(){}
+		virtual void OnUpdate(){}
+		virtual void OnPostUpdate(){}
+		virtual void OnEnd(){}
+		Context* m_Context;
+
+	private:
+		bool m_HasRunOnStart = false;
 	};
 }

@@ -37,3 +37,7 @@
 
 # CMake
 cmake-build-debug
+cmake-build-release
+
+# Tracy
+.Profiler
