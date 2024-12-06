@@ -1,16 +1,14 @@
-//
-// Created by Benton on 2024-11-30.
-//
+#pragma once
+#include "../ECS/System.h"
 
-#ifndef RENDERSYSTEM_H
-#define RENDERSYSTEM_H
+namespace Aerial::CoreSystems {
 
+	class RenderSystem : public System
+	{
 
+	protected:
+		void OnStart() override;
+		void OnUpdate() override;
+	};
 
-class RenderSystem {
-
-};
-
-
-
-#endif //RENDERSYSTEM_H
+}

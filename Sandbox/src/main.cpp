@@ -16,7 +16,7 @@ public:
 
 Aerial::ApplicationSettings Aerial::CreateApplicationSettings()
 {
-	return ApplicationSettings("Aerial Sandbox", 1280, 720);
+	return { "Sandbox", 1280, 720 };
 }
 
 Aerial::Application* Aerial::CreateApplication()

@@ -16,7 +16,6 @@ namespace Aerial
 		SDL_WindowFlags WindowFlags = SDL_WINDOW_RESIZABLE;
 	};
 
-
 	class AERIAL_API Application
 	{
 	public:

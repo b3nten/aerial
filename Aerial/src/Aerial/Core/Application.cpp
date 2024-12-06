@@ -1,35 +1,17 @@
 #include "./Application.h"
-
 #include "Profiler.h"
 #include "../Systems/InputSystem.h"
-#include "../Systems/AssetSystem.h"
+#include "../Systems/RenderSystem.h"
 #include "./Events.h"
-#include "./LinkedList.h"
 
 namespace Aerial
 {
 	Application::Application()
 	{
 		AERIAL_ASSERT(s_Instance == nullptr, "You cannot create more than one application!");
-
 		s_Instance = this;
 
-		// Add core application level systems;
-		auto coreInputSystem = CreateArc<CoreSystems::InputSystem>();
-		auto coreAssetSystem = CreateArc<CoreSystems::AssetSystem>();
-
-		Events.Listen<SDLEvent>([](auto& e)
-		{
-			AERIAL_LOG_INFO("lambda %d", e.Event.type);
-		});
-
-		auto handler = CreateArc<std::function<void(SDLEvent&)>>([](auto& e)
-		{
-			AERIAL_LOG_INFO("handler %d", e.Event.type);
-		});
-		Events.Listen<SDLEvent>(handler);
-
-		this->m_AppContext << coreInputSystem << coreAssetSystem;
+		m_AppContext << CreateArc<CoreSystems::RenderSystem>();
 	}
 
 	Application::~Application()
@@ -37,10 +19,20 @@ namespace Aerial
 		s_Instance = nullptr;
 	}
 
-	void Application::Update(float deltaTime)
+	void Application::Update(const float deltaTime)
 	{
 		AERIAL_PROFILE_FUNC;
+
+		// Set the frame delta time;
 		this->m_FrameDelta = FrameDelta(deltaTime);
+
+		// Dispatch listeners in the event queue;
+		Events.DispatchListeners();
+
+		// Update systems;
 		m_AppContext.Update();
+
+		// Clear the event queue and associated memory;
+		Events.ClearQueue();
 	}
 }

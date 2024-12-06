@@ -11,10 +11,13 @@ namespace Aerial {
 	template <typename T> struct SinglyLinkedListIterator
 	{
 		using Node = SingleNode<T>;
+
 		explicit SinglyLinkedListIterator(Node* node) : m_Node(node) {}
 
 		bool operator==(const SinglyLinkedListIterator& other) const { return m_Node == other.m_Node; }
+
 		bool operator!=(const SinglyLinkedListIterator& other) const { return m_Node != other.m_Node; }
+
 		T& operator*() const { return m_Node->Data; }
 
 		SinglyLinkedListIterator& operator++()
@@ -39,25 +42,55 @@ namespace Aerial {
 	public:
 		using Iterator = SinglyLinkedListIterator<T>;
 
+		SinglyLinkedList() = default;
+		SinglyLinkedList(SinglyLinkedList&&) = delete;
+		SinglyLinkedList(const SinglyLinkedList& other)
+		{
+			auto node = other.m_Head;
+			while (node)
+			{
+				PushBack(node->Data);
+				node = node->Next;
+			}
+		}
+
+		SinglyLinkedList& operator=(const SinglyLinkedList& other) {
+			if (this == &other) return *this;
+			Clear();
+			SingleNode<T>* current = other.m_Head;
+			while (current) {
+				PushBack(current->Data);
+				current = current->Next;
+			}
+			return *this;
+		}
+
+		SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept {
+			if (this == &other) return *this;
+			Clear();
+			m_Head = other.m_Head;
+			m_Tail = other.m_Tail;
+			m_Size = other.m_Size;
+			other.m_Head = nullptr;
+			other.m_Tail = nullptr;
+			other.m_Size = 0;
+			return *this;
+		}
+
 		~SinglyLinkedList()
 		{
-			while (m_Head)
-			{
-				auto node = m_Head;
-				m_Head = m_Head->Next;
-				delete node;
-			}
+			Clear();
 		}
 
 		T Head() const
 		{
-			if (not m_Head) return nullptr;
+			AERIAL_ASSERT(m_Head, "Head is null");
 			return m_Head->Data;
 		}
 
 		T Tail() const
 		{
-			if (not m_Tail) return nullptr;
+			AERIAL_ASSERT(m_Tail, "Tail is null");
 			return m_Tail->Data;
 		}
 
@@ -99,6 +132,7 @@ namespace Aerial {
 				m_Tail->Next = node;
 				m_Tail = node;
 			}
+			++m_Size;
 		}
 
 		T PopBack()
@@ -125,6 +159,18 @@ namespace Aerial {
 			delete oldNode;
 			--m_Size;
 			return data;
+		}
+
+		void Clear()
+		{
+			while (m_Head)
+			{
+				auto node = m_Head;
+				m_Head = m_Head->Next;
+				delete node;
+			}
+			m_Tail = nullptr;
+			m_Size = 0;
 		}
 
 	protected:

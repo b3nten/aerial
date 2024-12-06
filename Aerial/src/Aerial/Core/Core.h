@@ -30,6 +30,7 @@ namespace Aerial
 
 }
 
+
 #define AERIAL_ASSERT(x, ...) if (!(x)) { AERIAL_LOG_ERROR(__VA_ARGS__); __debugbreak(); }
 #define BIT(x) (1 << x)
 
@@ -45,3 +46,27 @@ namespace Aerial
 // #endif
 
 #define AERIAL_API
+
+namespace Aerial::NumberExtensions
+{
+	constexpr std::size_t operator""_KiB(unsigned long long int x) {
+		return 1024ULL * x;
+	}
+
+	constexpr std::size_t operator""_MiB(unsigned long long int x) {
+		return 1024_KiB * x;
+	}
+
+	constexpr std::size_t operator""_GiB(unsigned long long int x) {
+		return 1024_MiB * x;
+	}
+
+	constexpr std::size_t operator""_TiB(unsigned long long int x) {
+		return 1024_GiB * x;
+	}
+
+	constexpr std::size_t operator""_PiB(unsigned long long int x) {
+		return 1024_TiB * x;
+	}
+}
+

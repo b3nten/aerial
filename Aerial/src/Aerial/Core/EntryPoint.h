@@ -19,7 +19,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 	Aerial::ApplicationSettings settings = Aerial::CreateApplicationSettings();
 
 	// init the library, here we make a window so we only need the Video capabilities.
-	if (not SDL_Init(SDL_INIT_VIDEO))
+	if (not SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD))
 	{
 		return SDL_Fail();
 	}
@@ -73,17 +73,9 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 SDL_AppResult SDL_AppIterate(void* appstate)
 {
 	auto time = SDL_GetTicks() / 1000.f;
-	auto red = (std::sin(time) + 1) / 2.0 * 255;
-	auto green = (std::sin(time / 2) + 1) / 2.0 * 255;
-	auto blue = (std::sin(time) * 2 + 1) / 2.0 * 255;
-
-	SDL_SetRenderDrawColor(Aerial::Application::SDLRenderer, red, green, blue, SDL_ALPHA_OPAQUE);
-	SDL_RenderClear(Aerial::Application::SDLRenderer);
-	SDL_RenderPresent(Aerial::Application::SDLRenderer);
 
 	Aerial::Application::Get()->Update(time);
 
-	// clear events from the queue
 	SDL_FlushEvents(SDL_EVENT_FIRST, SDL_EVENT_LAST);
 
 	return Aerial::Application::SDLAppResult;
@@ -96,6 +88,7 @@ void SDL_AppQuit(void* appstate, SDL_AppResult result)
 		delete Aerial::Application::Get();
 		SDL_DestroyRenderer(Aerial::Application::SDLRenderer);
 		SDL_DestroyWindow(Aerial::Application::SDLWindow);
+		SDL_Quit();
 	}
 
 	AERIAL_LOG_INFO("Aerial application quit successfully!");
