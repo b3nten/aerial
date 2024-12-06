@@ -2,12 +2,22 @@
 
 namespace Aerial::CoreSystems {
 
+	RenderSystem::RenderSystem()
+	{
+
+	}
+
 	void RenderSystem::OnStart()
 	{
 
 	}
 
 	void RenderSystem::OnUpdate()
+	{
+
+	}
+
+	void RenderSystem::OnEnd()
 	{
 
 	}
