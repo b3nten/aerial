@@ -7,6 +7,7 @@ namespace Aerial::CoreSystems {
 	{
 	public:
 		RenderSystem();
+		~RenderSystem();
 	protected:
 		void OnStart() override;
 		void OnUpdate() override;

@@ -22,4 +22,9 @@ namespace Aerial::CoreSystems {
 
 	}
 
+	RenderSystem::~RenderSystem()
+	{
+
+	}
+
 }
