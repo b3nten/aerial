@@ -1,12 +1,11 @@
 #pragma once
-#include <utility>
-#include <entt/entt.hpp>
-#include "./Entity.h"
-#include "./System.h"
-#include "../Core/UUID.h"
 #include <any>
 #include <typeindex>
 #include <typeinfo>
+#include <utility>
+#include <entt/entt.hpp>
+#include "./System.h"
+#include "../Core/UUID.h"
 
 namespace Aerial
 {
@@ -18,42 +17,6 @@ namespace Aerial
 		friend class Application;
 
 	public:
-		template <typename... Components, typename... Args>
-		Entity CreateEntity(Args&&... args)
-		{
-			auto entity = Entity(&m_Registry);
-			(entity.SetComponent<Components>(std::forward<Args>(args)...), ...);
-			return entity;
-		}
-
-		void DestroyEntity(const Entity& entity)
-		{
-			m_Registry.destroy(entity.m_EnttID);
-		}
-
-		template<typename... Components>
-		auto GetEntitiesByComponents()
-		{
-			return m_Registry.view<Components...>();
-		}
-
-		template <typename T, typename ...Args>
-		auto SetSingletonComponent(Args&&... args)
-		{
-			m_SingletonComponents[typeid(T)] = CreateArc<T>(std::forward<Args>(args)...);
-		}
-
-		template <typename T>
-		auto GetSingletonComponent()
-		{
-			return std::any_cast<Arc<T>>(m_SingletonComponents[typeid(T)]);
-		}
-
-		template <typename T>
-		auto DeleteSingletonComponent()
-		{
-			m_SingletonComponents.erase(typeid(T));
-		}
 
 		void AddSystem(const Arc<System>& system)
 		{
@@ -62,7 +25,6 @@ namespace Aerial
 			system->m_Context = this;
 			m_Systems.push_back(system);
 		}
-
 		template <DerivedFromSystem T>
 		Arc<T> GetSystem()
 		{
@@ -75,7 +37,6 @@ namespace Aerial
 			}
 			return nullptr;
 		}
-
 		void RemoveSystem(const Arc<System>& system)
 		{
 			std::erase(m_Systems, system);
@@ -85,13 +46,13 @@ namespace Aerial
 		// optional; if not called, System::OnStart() will be called before the first System::OnUpdate()
 		void Start();
 		void Update();
+		void End();
 
-		auto GetRegistry() { return &m_Registry; }
+		entt::registry* GetRegistry() { return &m_Registry; }
 
 	private:
 		entt::registry m_Registry;
 		std::vector<Arc<System>> m_Systems;
-		std::map<std::type_index, std::any> m_SingletonComponents;
 	};
 
 	// lolololololololololol

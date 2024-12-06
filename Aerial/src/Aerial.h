@@ -11,9 +11,8 @@
 #include "./Aerial/Core/Logger.h"
 #include "./Aerial/Core/UUID.h"
 
-// ECSAerial/
+// ECS
 #include "./Aerial/ECS/Context.h"
-#include "./Aerial/ECS/Entity.h"
 #include "./Aerial/ECS/System.h"
 
 // Maths

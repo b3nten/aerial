@@ -23,4 +23,16 @@ namespace Aerial
 			system->OnUpdate();
 		}
 	}
+
+	void Context::End()
+	{
+		for (auto system : m_Systems)
+		{
+			if (system->m_HasRunOnStart)
+			{
+				system->OnEnd();
+			}
+		}
+	}
+
 }

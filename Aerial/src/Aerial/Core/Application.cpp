@@ -1,9 +1,10 @@
 #include "./Application.h"
 
 #include "Profiler.h"
-#include "../Systems/EventSystem.h"
 #include "../Systems/InputSystem.h"
 #include "../Systems/AssetSystem.h"
+#include "./Events.h"
+#include "./LinkedList.h"
 
 namespace Aerial
 {
@@ -14,11 +15,21 @@ namespace Aerial
 		s_Instance = this;
 
 		// Add core application level systems;
-		auto coreEventSystem = CreateArc<CoreSystems::EventSystem>();
 		auto coreInputSystem = CreateArc<CoreSystems::InputSystem>();
 		auto coreAssetSystem = CreateArc<CoreSystems::AssetSystem>();
 
-		this->m_AppContext << coreEventSystem << coreInputSystem << coreAssetSystem;
+		Events.Listen<SDLEvent>([](auto& e)
+		{
+			AERIAL_LOG_INFO("lambda %d", e.Event.type);
+		});
+
+		auto handler = CreateArc<std::function<void(SDLEvent&)>>([](auto& e)
+		{
+			AERIAL_LOG_INFO("handler %d", e.Event.type);
+		});
+		Events.Listen<SDLEvent>(handler);
+
+		this->m_AppContext << coreInputSystem << coreAssetSystem;
 	}
 
 	Application::~Application()

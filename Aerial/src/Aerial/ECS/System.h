@@ -13,9 +13,7 @@ namespace Aerial
 
 	protected:
 		virtual void OnStart(){}
-		virtual void OnPreUpdate(){}
 		virtual void OnUpdate(){}
-		virtual void OnPostUpdate(){}
 		virtual void OnEnd(){}
 		Context* m_Context;
 

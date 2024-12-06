@@ -63,6 +63,9 @@ SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 	{
 		Aerial::Application::SDLAppResult = SDL_APP_SUCCESS;
 	}
+
+	Aerial::Application::Events.Push<Aerial::SDLEvent>({ .Type = event->type, .Event = *event });
+
 	return SDL_APP_CONTINUE;
 }
 

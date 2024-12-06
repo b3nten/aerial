@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "./Logger.h"
+#include "./Profiler.h"
 
 namespace Aerial
 {
@@ -21,9 +22,16 @@ namespace Aerial
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
+
+	template<typename ... Ts>                                                 // (7)
+	struct Overload : Ts ... {
+		using Ts::operator() ...;
+	};
+
 }
 
 #define AERIAL_ASSERT(x, ...) if (!(x)) { AERIAL_LOG_ERROR(__VA_ARGS__); __debugbreak(); }
+#define BIT(x) (1 << x)
 
 // // API export/import macro
 // #ifdef AERIAL_PLATFORM_WINDOWS

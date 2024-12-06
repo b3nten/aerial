@@ -12,13 +12,11 @@ add_library(${ENGINE_NAME} STATIC
         "src/Aerial/Core/FrameDelta.h"
 
         "src/Aerial/ECS/Context.cpp"
-        "src/Aerial/ECS/Entity.cpp"
         "src/Aerial/ECS/System.h"
 
         "src/Aerial/Systems/AssetSystem.cpp"
         "src/Aerial/Systems/AudioSystem.cpp"
         "src/Aerial/Systems/RenderSystem.cpp"
-        "src/Aerial/Systems/EventSystem.cpp"
         "src/Aerial/Systems/InputSystem.cpp"
 
         "src/Aerial.h"
