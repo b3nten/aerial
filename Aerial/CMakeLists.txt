@@ -12,19 +12,26 @@ add_library(${ENGINE_NAME} STATIC
         "src/Aerial/Core/FrameDelta.h"
 
         "src/Aerial/ECS/Context.cpp"
-        "src/Aerial/ECS/System.h"
+        "src/Aerial/ECS/ecs_system.h"
 
-        "src/Aerial/Systems/AssetSystem.cpp"
-        "src/Aerial/Systems/AudioSystem.cpp"
         "src/Aerial/Systems/RenderSystem.cpp"
-        "src/Aerial/Systems/InputSystem.cpp"
 
         "src/Aerial.h"
 )
 
 #sdl3
+set(SDL_STATIC OFF CACHE BOOL "" FORCE)
+set(SDL_SHARED ON CACHE BOOL "" FORCE)
 add_subdirectory(external/SDL EXCLUDE_FROM_ALL)
-target_link_libraries(Aerial PUBLIC SDL3::SDL3-static)
+target_link_libraries(Aerial PUBLIC SDL3::SDL3)
+
+if(WIN32)
+    add_custom_command(TARGET ${ENGINE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE_DIR:${ENGINE_NAME}>
+    )
+endif()
 
 #tracy
 add_subdirectory(external/tracy EXCLUDE_FROM_ALL)

@@ -1,17 +1,21 @@
 #pragma once
-#include "../ECS/System.h"
+#include <SDL3/SDL.h>
 
-namespace Aerial::CoreSystems {
+#include "../ECS/ecs_system.h"
 
-	class RenderSystem : public System
+namespace aerial::core_systems {
+
+	class render_system : public ecs_system
 	{
 	public:
-		RenderSystem();
-		~RenderSystem();
+		render_system();
+		~render_system();
 	protected:
-		void OnStart() override;
-		void OnUpdate() override;
-		void OnEnd() override;
+		void on_start() override;
+		void on_update() override;
+		void on_end() override;
+
+		// SDL_GPUDevice m_Device;
 	};
 
 }

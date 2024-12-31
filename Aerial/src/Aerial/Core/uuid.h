@@ -2,24 +2,24 @@
 #include <cstdint>
 #include <random>
 
-namespace Aerial {
+namespace aerial {
 
 	static std::random_device s_RandomDevice;
 	static std::mt19937_64 s_Engine(s_RandomDevice());
 	static std::uniform_int_distribution<uint64_t> s_UniformDistribution;
 
-	class AERIAL_API UUID
+	class AERIAL_API uuid
 	{
 	public:
-		UUID() : m_UUID(CreateInt()) {}
-		explicit UUID(const uint64_t uuid) : m_UUID(uuid) {}
-		UUID(const UUID&) = default;
-		explicit operator uint64_t() const { return m_UUID; }
-		bool operator==(const UUID& other) const { return m_UUID == other.m_UUID; }
+		uuid() : m_value(CreateInt()) {}
+		explicit uuid(const uint64_t uuid) : m_value(uuid) {}
+		uuid(const uuid&) = default;
+		explicit operator uint64_t() const { return m_value; }
+		bool operator==(const uuid& other) const { return m_value == other.m_value; }
 
 		uint64_t static CreateInt() { return s_UniformDistribution(s_Engine); }
 	private:
-		uint64_t m_UUID;
+		uint64_t m_value;
 	};
 }
 
@@ -27,9 +27,9 @@ namespace std {
 	template <typename T> struct hash;
 
 	template<>
-	struct hash<Aerial::UUID>
+	struct hash<aerial::uuid>
 	{
-		std::size_t operator()(const Aerial::UUID& uuid) const noexcept
+		std::size_t operator()(const aerial::uuid& uuid) const noexcept
 		{
 			return static_cast<uint64_t>(uuid);
 		}

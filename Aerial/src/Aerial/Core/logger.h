@@ -1,48 +1,45 @@
 #pragma once
 #define FMT_HEADER_ONLY
-// ReSharper disable once CppUnusedIncludeDirective
-#include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/chrono.h>
-#include <SDL3/SDL_log.h>
 #include <print>
 
-namespace Aerial
+namespace aerial
 {
-	class Logger
+	class logger
 	{
 	public:
 		template<typename... Args>
-		static void Warn(fmt::format_string<Args...> fmt, Args&&... args)
+		static void warn(fmt::format_string<Args...> fmt, Args&&... args)
 		{
 			std::println("Warning: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}
 
 		template<typename... Args>
-		static void Error(fmt::format_string<Args...> fmt, Args&&... args)
+		static void error(fmt::format_string<Args...> fmt, Args&&... args)
 		{
 			std::println("Error: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}
 
 		template<typename... Args>
-		static void Info(fmt::format_string<Args...> fmt, Args&&... args)
+		static void info(fmt::format_string<Args...> fmt, Args&&... args)
 		{
 			std::println("Info: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}
 
 		template<typename... Args>
-		static void Debug(fmt::format_string<Args...> fmt, Args&&... args)
+		static void debug(fmt::format_string<Args...> fmt, Args&&... args)
 		{
 			std::println("Debug: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}
 
-		static void Debug(const char* str)
+		static void debug(const char* str)
 		{
 			std::println("Debug: {}", str);
 		}
 
 		template<typename... Args>
-		static void Fatal(fmt::format_string<Args...> fmt, Args&&... args)
+		static void fatal(fmt::format_string<Args...> fmt, Args&&... args)
 		{
 			std::println("Fatal: {}", fmt::format(fmt, std::forward<Args>(args)...));
 		}

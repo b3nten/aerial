@@ -20,3 +20,11 @@ if(WIN32)
             WIN32_EXECUTABLE $<NOT:$<CONFIG:Debug>>
     )
 endif()
+
+if(WIN32)
+    add_custom_command(TARGET ${SANDBOX_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:SDL3::SDL3>
+            $<TARGET_FILE_DIR:${SANDBOX_NAME}>
+    )
+endif()

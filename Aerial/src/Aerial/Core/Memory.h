@@ -4,25 +4,25 @@
 #include <string.h>
 #include "LinkedList.h"
 
-namespace Aerial
+namespace aerial
 {
-	class BumpAlloc
+	class bump_alloc
 	{
-		struct Chunk
+		struct chunk
 		{
-			std::byte* m_Memory;
-			size_t m_Size;
-			size_t m_Used;
+			std::byte* m_memory;
+			size_t m_size;
+			size_t m_used;
 
-			Chunk(size_t size) : m_Size(size), m_Used(0)
+			chunk(size_t size) : m_size(size), m_used(0)
 			{
-				m_Memory = (std::byte*)malloc(size);
-				if(not m_Memory) throw std::bad_alloc();
+				m_memory = (std::byte*)malloc(size);
+				if(not m_memory) throw std::bad_alloc();
 			}
 
-			~Chunk()
+			~chunk()
 			{
-				free((void*)m_Memory);
+				free((void*)m_memory);
 			}
 		};
 
@@ -30,89 +30,90 @@ namespace Aerial
 
 		bool m_AllowOversizedAllocations = false;
 
-		BumpAlloc(size_t chunkSize, size_t alignment = alignof(std::max_align_t)) : m_ChunkSize(chunkSize), m_Alignment(alignment)
+		bump_alloc(size_t chunk_size, size_t alignment = alignof(std::max_align_t)) : m_chunk_size(chunk_size), m_alignment(alignment)
 		{
-			if(chunkSize == 0)
+			if(chunk_size == 0)
 			{
 				AERIAL_ASSERT(false, "Chunk size must be greater than 0");
-				m_ChunkSize = 1024;
+				m_chunk_size = 1024;
 			}
 
 			if((alignment & (alignment - 1)) != 0)
 			{
 				AERIAL_ASSERT(false, "Alignment must be a power of 2");
-				m_Alignment = alignof(std::max_align_t);
+				m_alignment = alignof(std::max_align_t);
 			}
 
-			auto initialChunk = new Chunk(m_ChunkSize);
-			m_Chunks.PushBack(initialChunk);
+			auto initial_chunk = new chunk(m_chunk_size);
+			m_chunks.push_back(initial_chunk);
 		}
 
 		template <typename T>
-		BumpAlloc(int capacity) : BumpAlloc(sizeof(T) * capacity) {}
+		bump_alloc(int capacity) : bump_alloc(sizeof(T) * capacity) {}
 
-		~BumpAlloc()
+		~bump_alloc()
 		{
-			for (auto chunk : m_Chunks)
+			for (auto chunk : m_chunks)
 			{
 				delete chunk;
 			}
 		}
 
-		void* Allocate(size_t size)
+		void* allocate(size_t size)
 		{
-			auto chunk = m_Chunks.Tail();
+			auto new_chunk = m_chunks.tail();
 
-			if(size > m_ChunkSize)
+			if(size > m_chunk_size)
 			{
 				if(not m_AllowOversizedAllocations)
 				{
 					AERIAL_ASSERT(false, "Allocation size is larger than chunk size");
 				}
 				AERIAL_LOG_WARN("Allocation size is larger than chunk size");
-				chunk = new Chunk(size);
+				new_chunk = new chunk(size);
 				// Add new chunk to the front of the list, as it's a one-off allocation.
-				m_Chunks.PushFront(chunk);
+				m_chunks.push_front(new_chunk);
 			}
 
-			void* currentPosPointer = chunk->m_Memory + chunk->m_Used;
-			size_t remaining = chunk->m_Size - chunk->m_Used;
+			void* currentPosPointer = new_chunk->m_memory + new_chunk->m_used;
+			size_t remaining = new_chunk->m_size - new_chunk->m_used;
 
-			void* alignedPointer = std::align(m_Alignment, size, currentPosPointer, remaining);
+			void* alignedPointer = std::align(m_alignment, size, currentPosPointer, remaining);
 
 			if(not alignedPointer)
 			{
 				// Allocate a new chunk
-				m_Chunks.PushBack(new Chunk(m_ChunkSize));
-				chunk = m_Chunks.Tail();
-				currentPosPointer = chunk->m_Memory;
-				remaining = chunk->m_Size;
-				alignedPointer = std::align(m_Alignment, size, currentPosPointer, remaining);
+				m_chunks.push_back(new chunk(m_chunk_size));
+				new_chunk = m_chunks.tail();
+				currentPosPointer = new_chunk->m_memory;
+				remaining = new_chunk->m_size;
+				alignedPointer = std::align(m_alignment, size, currentPosPointer, remaining);
 				AERIAL_ASSERT(alignedPointer, "Failed to align memory in new chunk");
 			}
 
-			chunk->m_Used = (size_t) ( (std::byte*)alignedPointer - chunk->m_Memory ) + size;
+			new_chunk->m_used = (size_t) ( (std::byte*)alignedPointer - new_chunk->m_memory ) + size;
 			return alignedPointer;
 		};
 
 		template <typename T, typename ...Args>
-		T* Make(Args&& ...args)
+		T* make(Args&& ...args)
 		{
-			return new (Allocate(sizeof(T))) T(std::forward<Args>(args)...);
+			return new (allocate(sizeof(T))) T(std::forward<Args>(args)...);
 		}
 
-		void Clear()
+		void clear()
 		{
-			for (auto& chunk : m_Chunks)
+			for (auto& chunk : m_chunks)
 			{
-				chunk->m_Used = 0;
-				memset(chunk->m_Memory, 0, chunk->m_Size);
+				chunk->m_used = 0;
+				memset(chunk->m_memory, 0, chunk->m_size);
 			}
 		}
 
 	private:
-		SinglyLinkedList<Chunk*> m_Chunks;
-		size_t m_ChunkSize;
-		size_t m_Alignment;
+		singly_linked_list<chunk*> m_chunks;
+		size_t m_chunk_size;
+		size_t m_alignment;
 	};
+
 }

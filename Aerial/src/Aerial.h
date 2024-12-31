@@ -8,12 +8,12 @@
 #include "./Aerial/Core/Core.h"
 #include "./Aerial/Core/Application.h"
 #include "./Aerial/Core/FrameDelta.h"
-#include "./Aerial/Core/Logger.h"
-#include "./Aerial/Core/UUID.h"
+#include "./Aerial/Core/logger.h"
+#include "./Aerial/Core/uuid.h"
 
 // ECS
 #include "./Aerial/ECS/Context.h"
-#include "./Aerial/ECS/System.h"
+#include "./Aerial/ECS/ecs_system.h"
 
 // Maths
 #include <glm/common.hpp>

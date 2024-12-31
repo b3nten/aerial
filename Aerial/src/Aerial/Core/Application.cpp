@@ -1,38 +1,36 @@
 #include "./Application.h"
 #include "Profiler.h"
-#include "../Systems/InputSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "./Events.h"
 
-namespace Aerial
+namespace aerial
 {
-	Application::Application()
+	application::application()
 	{
-		AERIAL_ASSERT(s_Instance == nullptr, "You cannot create more than one application!");
-		s_Instance = this;
-
-		m_AppContext << CreateArc<CoreSystems::RenderSystem>();
+		AERIAL_ASSERT(s_instance == nullptr, "You cannot create more than one application!");
+		s_instance = this;
+		m_app_context << make_arc<core_systems::render_system>();
 	}
 
-	Application::~Application()
+	application::~application()
 	{
-		s_Instance = nullptr;
+		s_instance = nullptr;
 	}
 
-	void Application::Update(const float deltaTime)
+	void application::update(const float deltaTime)
 	{
 		AERIAL_PROFILE_FUNC;
 
 		// Set the frame delta time;
-		this->m_FrameDelta = FrameDelta(deltaTime);
+		this->m_frame_delta = FrameDelta(deltaTime);
 
-		// Dispatch listeners in the event queue;
-		Events.DispatchListeners();
+		// Dispatch m_listeners in the event queue;
+		events.dispatch_listeners();
 
-		// Update systems;
-		m_AppContext.Update();
+		// update systems;
+		m_app_context.run_systems_update();
 
 		// Clear the event queue and associated memory;
-		Events.ClearQueue();
+		events.clear_queue();
 	}
 }

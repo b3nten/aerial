@@ -1,28 +1,28 @@
 #include <Aerial.h>
 
-class SandboxApp : public Aerial::Application
+class sandbox_app : public aerial::application
 {
 public:
-    SandboxApp()
+    sandbox_app()
 	{
     	AERIAL_LOG_INFO("SandboxApp created!");
     }
 
-	~SandboxApp() override
+	~sandbox_app() override
 	{
 		AERIAL_LOG_INFO("SandboxApp destroyed!");
 	}
 };
 
-Aerial::ApplicationSettings Aerial::CreateApplicationSettings()
+aerial::application_settings aerial::create_application_settings()
 {
 	return { "Sandbox", 1280, 720 };
 }
 
-Aerial::Application* Aerial::CreateApplication()
+aerial::application* aerial::create_application()
 {
 	AERIAL_LOG_INFO("Creating SandboxApp");
-    return new SandboxApp();
+    return new sandbox_app();
 }
 
 // ReSharper disable once CppUnusedIncludeDirective

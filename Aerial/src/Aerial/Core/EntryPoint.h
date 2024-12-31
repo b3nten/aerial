@@ -5,8 +5,8 @@
 #include <cmath>
 #include "Aerial/Core/Profiler.h"
 
-inline extern Aerial::ApplicationSettings Aerial::CreateApplicationSettings();
-inline extern Aerial::Application* Aerial::CreateApplication();
+inline extern aerial::application_settings aerial::create_application_settings();
+inline extern aerial::application* aerial::create_application();
 
 SDL_AppResult SDL_Fail()
 {
@@ -16,7 +16,7 @@ SDL_AppResult SDL_Fail()
 
 SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 {
-	Aerial::ApplicationSettings settings = Aerial::CreateApplicationSettings();
+	aerial::application_settings settings = aerial::create_application_settings();
 
 	// init the library, here we make a window so we only need the Video capabilities.
 	if (not SDL_Init(SDL_INIT_AUDIO | SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_GAMEPAD))
@@ -25,13 +25,13 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 	}
 
 	// create a window
-	SDL_Window* window = SDL_CreateWindow(settings.Name.c_str(), settings.Width, settings.Height, settings.WindowFlags);
+	SDL_Window* window = SDL_CreateWindow(settings.name.c_str(), settings.width, settings.height, settings.window_flags);
 	if (not window)
 	{
 		AERIAL_LOG_ERROR("Could not create window.");
 		return SDL_Fail();
 	}
-	Aerial::Application::SDLWindow = window;
+	aerial::application::s_sdl_window = window;
 
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
 	if (not renderer)
@@ -39,7 +39,7 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 		AERIAL_LOG_ERROR("Could not create renderer.");
 		return SDL_Fail();
 	}
-	Aerial::Application::SDLRenderer = renderer;
+	aerial::application::s_sdl_renderer = renderer;
 
 	if(not SDL_ShowWindow(window))
 	{
@@ -47,24 +47,24 @@ SDL_AppResult SDL_AppInit(void** appstate, int argc, char* argv[])
 		return SDL_Fail();
 	}
 
-	if (Aerial::CreateApplication() == nullptr)
+	if (aerial::create_application() == nullptr)
 	{
 		AERIAL_LOG_ERROR("Could not create application.");
 		return SDL_APP_FAILURE;
 	}
 
 	AERIAL_LOG_INFO("Aerial application started successfully!");
-	return Aerial::Application::SDLAppResult = SDL_APP_CONTINUE;
+	return Aerial::application::s_sdl_app_result = SDL_APP_CONTINUE;
 }
 
 SDL_AppResult SDL_AppEvent(void* appstate, SDL_Event* event)
 {
 	if (event->type == SDL_EVENT_QUIT)
 	{
-		Aerial::Application::SDLAppResult = SDL_APP_SUCCESS;
+		Aerial::application::s_sdl_app_result = SDL_APP_SUCCESS;
 	}
 
-	Aerial::Application::Events.Push<Aerial::SDLEvent>({ .Type = event->type, .Event = *event });
+	Aerial::application::events.push<Aerial::sdl_event>({ .Type = event->type, .Event = *event });
 
 	return SDL_APP_CONTINUE;
 }
@@ -74,20 +74,20 @@ SDL_AppResult SDL_AppIterate(void* appstate)
 {
 	auto time = SDL_GetTicks() / 1000.f;
 
-	Aerial::Application::Get()->Update(time);
+	Aerial::application::Get()->update(time);
 
 	SDL_FlushEvents(SDL_EVENT_FIRST, SDL_EVENT_LAST);
 
-	return Aerial::Application::SDLAppResult;
+	return Aerial::application::s_sdl_app_result;
 }
 
 void SDL_AppQuit(void* appstate, SDL_AppResult result)
 {
-	if (Aerial::Application::Get())
+	if (Aerial::application::Get())
 	{
-		delete Aerial::Application::Get();
-		SDL_DestroyRenderer(Aerial::Application::SDLRenderer);
-		SDL_DestroyWindow(Aerial::Application::SDLWindow);
+		delete Aerial::application::Get();
+		SDL_DestroyRenderer(Aerial::application::s_sdl_renderer);
+		SDL_DestroyWindow(Aerial::application::s_sdl_window);
 		SDL_Quit();
 	}
 

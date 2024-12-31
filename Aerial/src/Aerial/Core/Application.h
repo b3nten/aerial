@@ -6,41 +6,40 @@
 
 #include "Events.h"
 
-namespace Aerial
-{
-	struct ApplicationSettings
-	{
-		std::string Name = "Aerial";
-		int Width = 1280;
-		int Height = 720;
-		SDL_WindowFlags WindowFlags = SDL_WINDOW_RESIZABLE;
+namespace aerial {
+
+	struct application_settings {
+		std::string name = "Aerial";
+		int width = 1280;
+		int height = 720;
+		SDL_WindowFlags window_flags = SDL_WINDOW_RESIZABLE;
 	};
 
-	class AERIAL_API Application
-	{
+	class AERIAL_API application {
 	public:
-		static Application* Get() { return s_Instance; }
-		inline static EventQueue Events;
-		inline static SDL_Renderer* SDLRenderer;
-		inline static SDL_Window* SDLWindow;
-		inline static SDL_AppResult SDLAppResult;
+		static application* Get() { return s_instance; }
+		inline static event_queue events;
+		inline static SDL_Renderer* s_sdl_renderer;
+		inline static SDL_Window* s_sdl_window;
+		inline static SDL_AppResult s_sdl_app_result;
 
-		Application();
-		virtual ~Application();
-		Application(const Application&) = delete;
-		Application& operator=(const Application&) = delete;
+		application();
+		virtual ~application();
+		application(const application&) = delete;
+		application& operator=(const application&) = delete;
 
-		void Update(float deltaTime);
-		[[nodiscard]] FrameDelta GetFrameDelta() const { return m_FrameDelta; }
+		void update(float deltaTime);
+		[[nodiscard]] FrameDelta get_frame_delta() const { return m_frame_delta; }
+
 	protected:
-		inline static Application *s_Instance;
+		inline static application* s_instance;
 
-		bool m_Running = false;
-		Context m_AppContext;
-		FrameDelta m_FrameDelta;
+		bool m_running = false;
+		ecs_context m_app_context;
+		FrameDelta m_frame_delta;
 	};
 
 	// Userland functions
-	ApplicationSettings CreateApplicationSettings();
-	Application* CreateApplication();
+	application_settings create_application_settings();
+	application* create_application();
 }

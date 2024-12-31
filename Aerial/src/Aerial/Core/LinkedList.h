@@ -1,50 +1,50 @@
 #pragma once
 
-namespace Aerial {
+namespace aerial {
 
-	template <typename T> struct SingleNode
+	template <typename T> struct single_node
 	{
-		SingleNode* Next;
-		T Data;
+		single_node* next;
+		T data;
 	};
 
-	template <typename T> struct SinglyLinkedListIterator
+	template <typename T> struct singly_linked_list_iterator
 	{
-		using Node = SingleNode<T>;
+		using Node = single_node<T>;
 
-		explicit SinglyLinkedListIterator(Node* node) : m_Node(node) {}
+		explicit singly_linked_list_iterator(Node* node) : m_node(node) {}
 
-		bool operator==(const SinglyLinkedListIterator& other) const { return m_Node == other.m_Node; }
+		bool operator==(const singly_linked_list_iterator& other) const { return m_node == other.m_node; }
 
-		bool operator!=(const SinglyLinkedListIterator& other) const { return m_Node != other.m_Node; }
+		bool operator!=(const singly_linked_list_iterator& other) const { return m_node != other.m_node; }
 
-		T& operator*() const { return m_Node->Data; }
+		T& operator*() const { return m_node->data; }
 
-		SinglyLinkedListIterator& operator++()
+		singly_linked_list_iterator& operator++()
 		{
-			m_Node = m_Node->Next;
+			m_node = m_node->next;
 			return *this;
 		}
 
-		SinglyLinkedListIterator operator++(int)
+		singly_linked_list_iterator operator++(int)
 		{
-			SinglyLinkedListIterator it = *this;
+			singly_linked_list_iterator it = *this;
 			++*this;
 			return it;
 		}
 
 	private:
-		Node* m_Node;
+		Node* m_node;
 	};
 
-	template <typename T> class SinglyLinkedList
+	template <typename T> class singly_linked_list
 	{
 	public:
-		using Iterator = SinglyLinkedListIterator<T>;
+		using Iterator = singly_linked_list_iterator<T>;
 
-		SinglyLinkedList() = default;
-		SinglyLinkedList(SinglyLinkedList&&) = delete;
-		SinglyLinkedList(const SinglyLinkedList& other)
+		singly_linked_list() = default;
+		singly_linked_list(singly_linked_list&&) = delete;
+		singly_linked_list(const singly_linked_list& other)
 		{
 			auto node = other.m_Head;
 			while (node)
@@ -54,10 +54,10 @@ namespace Aerial {
 			}
 		}
 
-		SinglyLinkedList& operator=(const SinglyLinkedList& other) {
+		singly_linked_list& operator=(const singly_linked_list& other) {
 			if (this == &other) return *this;
-			Clear();
-			SingleNode<T>* current = other.m_Head;
+			clear();
+			single_node<T>* current = other.m_Head;
 			while (current) {
 				PushBack(current->Data);
 				current = current->Next;
@@ -65,9 +65,9 @@ namespace Aerial {
 			return *this;
 		}
 
-		SinglyLinkedList& operator=(SinglyLinkedList&& other) noexcept {
+		singly_linked_list& operator=(singly_linked_list&& other) noexcept {
 			if (this == &other) return *this;
-			Clear();
+			clear();
 			m_Head = other.m_Head;
 			m_Tail = other.m_Tail;
 			m_Size = other.m_Size;
@@ -77,40 +77,40 @@ namespace Aerial {
 			return *this;
 		}
 
-		~SinglyLinkedList()
+		~singly_linked_list()
 		{
-			Clear();
+			clear();
 		}
 
-		T Head() const
+		T head() const
 		{
 			AERIAL_ASSERT(m_Head, "Head is null");
 			return m_Head->Data;
 		}
 
-		T Tail() const
+		T tail() const
 		{
 			AERIAL_ASSERT(m_Tail, "Tail is null");
-			return m_Tail->Data;
+			return m_Tail->data;
 		}
 
 		Iterator begin() const { return Iterator(m_Head); }
 
 		Iterator end() const { return Iterator(nullptr); }
 
-		size_t Size() const { return m_Size; }
+		size_t size() const { return m_Size; }
 
-		bool Empty() const { return m_Size == 0; }
+		bool empty() const { return m_Size == 0; }
 
-		void PushFront(T data)
+		void push_front(T data)
 		{
-			auto node = new SingleNode<T>{ m_Head, data };
+			auto node = new single_node<T>{ m_Head, data };
 			m_Head = node;
 			if (not m_Tail) m_Tail = node;
 			++m_Size;
 		}
 
-		T PopFront()
+		T pop_front()
 		{
 			if (not m_Head) return nullptr;
 			auto data = m_Head->Data;
@@ -122,23 +122,23 @@ namespace Aerial {
 			return data;
 		}
 
-		void PushBack(T data)
+		void push_back(T data)
 		{
-			auto node = new SingleNode<T>{ nullptr, data };
+			auto node = new single_node<T>{ nullptr, data };
 			if (not m_Head) m_Head = node;
 			if (not m_Tail) m_Tail = node;
 			else
 			{
-				m_Tail->Next = node;
+				m_Tail->next = node;
 				m_Tail = node;
 			}
 			++m_Size;
 		}
 
-		T PopBack()
+		T pop_back()
 		{
 			if (not m_Tail || not m_Head) return nullptr;
-			auto data = m_Tail->Data;
+			auto data = m_Tail->data;
 			auto oldNode = m_Tail;
 
 			if (m_Size == 1)
@@ -148,7 +148,7 @@ namespace Aerial {
 			}
 			else
 			{
-				SingleNode<T>* node = m_Head;
+				single_node<T>* node = m_Head;
 				while (node->Next != m_Tail)
 				{
 					node = node->Next;
@@ -161,12 +161,12 @@ namespace Aerial {
 			return data;
 		}
 
-		void Clear()
+		void clear()
 		{
 			while (m_Head)
 			{
 				auto node = m_Head;
-				m_Head = m_Head->Next;
+				m_Head = m_Head->next;
 				delete node;
 			}
 			m_Tail = nullptr;
@@ -174,8 +174,8 @@ namespace Aerial {
 		}
 
 	protected:
-		SingleNode<T>* m_Head { nullptr };
-		SingleNode<T>* m_Tail { nullptr };
+		single_node<T>* m_Head { nullptr };
+		single_node<T>* m_Tail { nullptr };
 		size_t m_Size { 0 };
 	};
 }

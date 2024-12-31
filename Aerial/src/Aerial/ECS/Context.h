@@ -4,31 +4,31 @@
 #include <typeinfo>
 #include <utility>
 #include <entt/entt.hpp>
-#include "./System.h"
-#include "../Core/UUID.h"
+#include "./ecs_system.h"
+#include "../Core/uuid.h"
 
-namespace Aerial
+namespace aerial
 {
 	template <typename T>
-	concept DerivedFromSystem = std::is_base_of_v<System, T>;
+	concept DerivedFromSystem = std::is_base_of_v<ecs_system, T>;
 
-	class AERIAL_API Context
+	class AERIAL_API ecs_context
 	{
-		friend class Application;
+		friend class application;
 
 	public:
 
-		void AddSystem(const Arc<System>& system)
+		void add_system(const arc<ecs_system>& system)
 		{
-			const auto existing = GetSystem<System>();
+			const auto existing = get_system<ecs_system>();
 			AERIAL_ASSERT(not existing, "System already exists in context");
-			system->m_Context = this;
-			m_Systems.push_back(system);
+			system->m_ecs_context = this;
+			m_systems_list.push_back(system);
 		}
 		template <DerivedFromSystem T>
-		Arc<T> GetSystem()
+		arc<T> get_system()
 		{
-			for (auto& system : m_Systems)
+			for (auto& system : m_systems_list)
 			{
 				if (typeid(*system.get()) == typeid(T))
 				{
@@ -37,28 +37,27 @@ namespace Aerial
 			}
 			return nullptr;
 		}
-		void RemoveSystem(const Arc<System>& system)
+		void remove_system(const arc<ecs_system>& system)
 		{
-			std::erase(m_Systems, system);
-			system->OnEnd();
+			std::erase(m_systems_list, system);
+			system->on_end();
 		}
 
 		// optional; if not called, System::OnStart() will be called before the first System::OnUpdate()
-		void Start();
-		void Update();
-		void End();
+		void run_systems_start();
+		void run_systems_update();
+		void run_systems_end();
 
-		entt::registry* GetRegistry() { return &m_Registry; }
+		entt::registry* get_registry() { return &m_internal_registry; }
 
 	private:
-		entt::registry m_Registry;
-		std::vector<Arc<System>> m_Systems;
+		entt::registry m_internal_registry;
+		std::vector<arc<ecs_system>> m_systems_list;
 	};
 
-	// lolololololololololol
-	inline Context& operator<<(Context& context, const Arc<System>& system)
+	inline ecs_context& operator<<(ecs_context& context, const arc<ecs_system>& system)
 	{
-		context.AddSystem(system);
+		context.add_system(system);
 		return context;
 	}
 }

@@ -1,36 +1,36 @@
 #include "./Context.h"
 
-namespace Aerial
+namespace aerial
 {
-	void Context::Start()
+	void ecs_context::run_systems_start()
 	{
-		for (auto system : m_Systems)
+		for (auto system : m_systems_list)
 		{
-			system->OnStart();
-			system->m_HasRunOnStart = true;
+			system->on_start();
+			system->m_has_run_on_start = true;
 		}
 	}
 
-	void Context::Update()
+	void ecs_context::run_systems_update()
 	{
-		for (auto system : m_Systems)
+		for (auto system : m_systems_list)
 		{
-			if (!system->m_HasRunOnStart)
+			if (!system->m_has_run_on_start)
 			{
-				system->OnStart();
-				system->m_HasRunOnStart = true;
+				system->on_start();
+				system->m_has_run_on_start = true;
 			}
-			system->OnUpdate();
+			system->on_update();
 		}
 	}
 
-	void Context::End()
+	void ecs_context::run_systems_end()
 	{
-		for (auto system : m_Systems)
+		for (auto system : m_systems_list)
 		{
-			if (system->m_HasRunOnStart)
+			if (system->m_has_run_on_start)
 			{
-				system->OnEnd();
+				system->on_end();
 			}
 		}
 	}

@@ -4,94 +4,94 @@
 #include <variant>
 #include "Memory.h"
 
-using namespace Aerial::NumberExtensions;
+using namespace aerial::number_ext;
 
-namespace Aerial
+namespace aerial
 {
-	struct SDLEvent
+	struct sdl_event
 	{
 		Uint32 Type;
         SDL_Event Event;
 	};
 
-	class EventQueue
+	class event_queue
 	{
 
 	public:
-		EventQueue() = default;
-		EventQueue(const EventQueue&) = delete;
-		EventQueue(EventQueue&&) = delete;
-		EventQueue& operator=(const EventQueue&) = delete;
+		event_queue() = default;
+		event_queue(const event_queue&) = delete;
+		event_queue(event_queue&&) = delete;
+		event_queue& operator=(const event_queue&) = delete;
 
 		template <typename Event>
-		void Listen(std::function<void(Event&)>&& handler)
+		void listen(std::function<void(Event&)>&& handler)
 		{
 
 		}
 
 		template <typename Event>
-		void Listen(Arc<std::function<void(Event&)>> handler)
+		void listen(arc<std::function<void(Event&)>> handler)
 		{
 
 		}
 
 		template <typename T, typename ...Args>
-		void Push(Args&& ...args)
+		void push(Args&& ...args)
         {
-			T* event = m_Arena.Make<T>(std::forward<Args>(args)...);
-			eventQueue.push_back({ typeid(T).hash_code(), event });
+			T* event = m_arena.make<T>(std::forward<Args>(args)...);
+			m_event_queue.push_back({ typeid(T).hash_code(), event });
         }
 
 		template <typename T>
-		void Push(const T& event)
+		void push(const T& event)
 		{
-			T* e = m_Arena.Make<T>(event);
-			eventQueue.push_back({ typeid(T).hash_code(), e });
+			T* e = m_arena.make<T>(event);
+			m_event_queue.push_back({ typeid(T).hash_code(), e });
 		}
 
 		template <typename T>
-		void Push(T&& event)
+		void push(T&& event)
 		{
-			T* e = m_Arena.Make<T>(std::forward<T>(event));
-			eventQueue.push_back({ typeid(T).hash_code(), e });
+			T* e = m_arena.make<T>(std::forward<T>(event));
+			m_event_queue.push_back({ typeid(T).hash_code(), e });
 		}
 
-		void DispatchListeners()
+		void dispatch_listeners()
 		{
 			AERIAL_PROFILE_FUNC;
 
-			for (EventEntry& e : eventQueue)
+			for (event_entry& e : m_event_queue)
             {
-				for (auto& handlers = listeners[e.type]; auto& [func, _] : handlers)
+				for (auto& handlers = m_listeners[e.type]; auto& [func, _] : handlers)
                 {
 
                 }
             }
 		}
 
-		void ClearQueue()
+		void clear_queue()
 		{
-			eventQueue.clear();
-			m_Arena.Clear();
+			m_event_queue.clear();
+			m_arena.clear();
 		}
 
 	private:
 
-		struct HandlerEntry
+		struct handler_entry
 		{
 			void* func;
 			size_t id;
 		};
 
-		struct EventEntry
+		struct event_entry
 		{
 			size_t type;
 			void* event;
 		};
 
-		BumpAlloc m_Arena = BumpAlloc(100_KiB);
-		std::deque<EventEntry> eventQueue;
-		std::unordered_map<size_t, std::list<HandlerEntry>> listeners;
-		size_t nextHandlerId = 0;
+		bump_alloc m_arena = bump_alloc(100_KiB);
+		std::deque<event_entry> m_event_queue;
+		std::unordered_map<size_t, std::list<handler_entry>> m_listeners;
+		size_t m_next_handler_id = 0;
 	};
 }
